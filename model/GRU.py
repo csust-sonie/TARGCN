@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from model.EmbGCN import EmbGCN as GCN              # TARGCN
+# from model.EmbGCN import EmbGCN_noGate as GCN     # TARGCN-noGate
 # from model.EmbGCN import EmbGCN_linear as GCN     # TARGCN-linear
 # from model.EmbGCN import EmbGCN_SA as GCN         # TARGCN-SA
 
