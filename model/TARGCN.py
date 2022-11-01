@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch.nn.utils import weight_norm
 from model.GRU import GRU
-from model.trans_layer import transformer_layer
+from model.temporal_attention_layer import transformer_layer
 from torch.autograd import Variable
 import math
 device=torch.device('cuda')
