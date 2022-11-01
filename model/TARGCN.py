@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch.nn.utils import weight_norm
 from model.GRU import GRU
-from model.temporal_attention_layer import transformer_layer
+from model.temporal_attention_layer import TA_layer
 from torch.autograd import Variable
 import math
 device=torch.device('cuda')
@@ -22,7 +22,7 @@ class AVWDCRNN(nn.Module):
         # self.tcn=TemporalConvNet(dim_in,[1,1,1],3,0.2)
         for _ in range(1, num_layers):
             self.dcrnn_cells.append(GRU(node_num, dim_out, dim_out,self.adj ,cheb_k, embed_dim))
-        self.trans_layer_T = transformer_layer(dim_out, dim_out, 2, 2)
+        self.TA_layer = TA_layer(dim_out, dim_out, 2, 2)
 
     def forward(self, x, init_state, node_embeddings):
 
@@ -42,7 +42,7 @@ class AVWDCRNN(nn.Module):
         #current_inputs: the outputs of last layer: (B, T, N, hidden_dim)
         #output_hidden: the last state for each layer: (num_layers, B, N, hidden_dim)
         #last_state: (B, N, hidden_dim)
-        current_inputs=self.trans_layer_T(current_inputs)
+        current_inputs=self.TA_layer(current_inputs)
         return current_inputs, output_hidden
 
     def init_hidden(self, batch_size):
