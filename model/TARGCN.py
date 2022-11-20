@@ -8,9 +8,9 @@ import math
 device=torch.device('cuda')
 
 
-class AVWDCRNN(nn.Module):
+class TARGCN_cell(nn.Module):
     def __init__(self, node_num, dim_in, dim_out, cheb_k, embed_dim, adj,num_layers=1):
-        super(AVWDCRNN, self).__init__()
+        super(TARGCN_cell, self).__init__()
         assert num_layers >= 1, 'At least one GRU layer in the Encoder.'
         self.adj=adj
         self.node_num = node_num
@@ -65,7 +65,7 @@ class TARGCN(nn.Module):
 
         self.node_embeddings = nn.Parameter(torch.randn(self.num_node, args.embed_dim), requires_grad=True)
 
-        self.encoder = AVWDCRNN(args.num_nodes, args.input_dim, args.rnn_units, args.cheb_k,
+        self.encoder = TARGCN_cell(args.num_nodes, args.input_dim, args.rnn_units, args.cheb_k,
                                 args.embed_dim,self.adj, args.num_layers)
 
         #predictor
