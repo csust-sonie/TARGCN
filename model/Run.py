@@ -18,13 +18,14 @@ from lib.dataloader import get_dataloader
 from lib.TrainInits import print_model_parameters
 
 Mode = 'train'
+# Mode = 'test'
 DEBUG = 'True'
-DATASET = 'PEMSD4'
+DATASET = 'PEMS03'
 DEVICE = 'cuda:0'
 MODEL = 'TARGCN'
 
 #get configuration
-config_file = './{}.conf'.format(DATASET)
+config_file = './conf/{}.conf'.format(DATASET)
 config = configparser.ConfigParser()
 config.read(config_file)
 
@@ -82,6 +83,7 @@ args.add_argument('--real_value', default=config['train']['real_value'], type=ev
 #test
 args.add_argument('--mae_thresh', default=config['test']['mae_thresh'], type=eval)
 args.add_argument('--mape_thresh', default=config['test']['mape_thresh'], type=float)
+args.add_argument('--test_para', default='best_model', type=str)
 #log
 args.add_argument('--log_dir', default='./', type=str)
 args.add_argument('--log_step', default=config['log']['log_step'], type=int)
@@ -107,27 +109,27 @@ def get_adjacent_matrix(distance_file: str, num_nodes: int, id_file: str = None,
     """
     A = np.zeros([int(num_nodes), int(num_nodes)])  
 
-    if id_file:  
+    if id_file:
         with open(id_file, "r") as f_id:
-            
+
             node_id_dict = {int(node_id): idx for idx, node_id in enumerate(f_id.read().strip().split("\n"))}
 
             with open(distance_file, "r") as f_d:
                 f_d.readline()
                 reader = csv.reader(f_d)
-                for item in reader:   
-                    if len(item) != 3: 
+                for item in reader:
+                    if len(item) != 3:
                         continue
-                    i, j, distance = int(item[0]), int(item[1]), float(item[2]) 
-                    if graph_type == "connect": 
+                    i, j, distance = int(item[0]), int(item[1]), float(item[2])
+                    if graph_type == "connect":
                         A[node_id_dict[i], node_id_dict[j]] = 1.
                         A[node_id_dict[j], node_id_dict[i]] = 1.
-                    elif graph_type == "distance":  
+                    elif graph_type == "distance":
                         A[node_id_dict[i], node_id_dict[j]] = 1. / distance
                         A[node_id_dict[j], node_id_dict[i]] = 1. / distance
                     else:
                         raise ValueError("graph type is not correct (connect or distance)")
-        return A
+        return torch.from_numpy(A)
 
     with open(distance_file, "r") as f_d:
         f_d.readline()
@@ -147,7 +149,9 @@ def get_adjacent_matrix(distance_file: str, num_nodes: int, id_file: str = None,
 
     return torch.from_numpy(A)
 
-adj=get_adjacent_matrix(distance_file,args.num_nodes)#.to(device=args.device)
+adj=get_adjacent_matrix(distance_file,args.num_nodes,id_file='../data/PEMS03/PEMS03.txt')#.to(device=args.device)
+# print(adj.shape)
+# exit()
 model = Network(args,adj)
 model = model.to(args.device)
 for p in model.parameters():
@@ -197,8 +201,21 @@ trainer = Trainer(model, loss, optimizer, train_loader, val_loader, test_loader,
 if args.mode == 'train':
     trainer.train()
 elif args.mode == 'test':
-    model.load_state_dict(torch.load('../pre-trained/{}.pth'.format(args.dataset)))
+    model.load_state_dict(torch.load('./model_para/{}/{}.pth'.format(args.dataset,args.test_para)))
     print("Load saved model")
     trainer.test(model, trainer.args, test_loader, scaler, trainer.logger)
+elif args.mode=='printEmb':
+    import matplotlib.pyplot as plt
+    import torch.nn.functional as F
+    model.load_state_dict(torch.load('model_para/{}/{}.pth'.format(args.dataset, args.test_para)))
+    adj_m=model.state_dict()['node_embeddings'].cpu()
+    # supports = F.softmax(F.relu(torch.mm(adj_m, adj_m.transpose(0, 1))), dim=1)  # N N
+    supports = F.relu(torch.mm(adj_m, adj_m.transpose(0, 1))) # N N
+
+    plt.figure(figsize=(10, 10))
+    # plt.imshow(supports,cmap='YlOrBr')
+    plt.imshow(supports,cmap='Reds')
+    plt.show()
+
 else:
     raise ValueError
