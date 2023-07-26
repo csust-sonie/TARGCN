@@ -17,9 +17,12 @@ Overview:
 
 This package contains the implemention of algorithm TARGCN.  
 
-To run the code, one can change the parameter "DATASET" to specify "PEMSD4" 
-or "PEMSD8" in 'model/Run.py', and run the Python file 'model/Run.py'. 
-To modify the hyperparameters you need to change the parameters in 'PEMSD4.conf' 
+run the code:In the TARGCN/model directory
+"python Run_XX.py --mode train/test --test_para epoch_XX"
+--mode : train or test
+--test_para : Specifies the name of the saved model parameter file
+
+To modify the hyperparameters you need to change the parameters in 'conf/PEMSD4.conf' 
 and "PEMSD8.conf".
   
 The code is associated with the following paper: 
