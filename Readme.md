@@ -17,23 +17,17 @@ Overview:
 
 This package contains the implemention of algorithm TARGCN.  
 
-<<<<<<< HEAD
+
 To run the code： on the TARGCN/model
 "python Run_xx.py --mode train/test --test_para epoch_xx"
+
 Run_xx.py: Run_03.py to run PEMS03 dataset, Run_D4.py to run PEMSD4 dataset, Run_D8.py to run PEMSD8 dataset
 --mode : train or test TARGCN
 --test_para : Specifies the name of the saved model parameter file
 
 To modify the hyperparameters you need to change the parameters in 'TARGCN/model/conf/PEMSD4.conf' 
 , "TARGCN/model/conf/PEMSD8.conf" and 'TARGCN/model/conf/PEMS03.conf'.
-=======
-run the code:In the TARGCN/model directory
-"python Run_XX.py --mode train/test --test_para epoch_XX"
---mode : train or test
---test_para : Specifies the name of the saved model parameter file
 
-To modify the hyperparameters of PEMSD4 you need to change the parameters in 'TARGCN/model/conf/PEMSD4.conf'.
->>>>>>> 97608469907010a5598b9f0886827de74460aa72
   
 The code is associated with the following paper: 
 Yun Song, Cong Jiang, Fan Wendong, Deng Zelin, Bai Xinke, "TARGCN: Temporal 
