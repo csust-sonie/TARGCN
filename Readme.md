@@ -22,8 +22,7 @@ run the code:In the TARGCN/model directory
 --mode : train or test
 --test_para : Specifies the name of the saved model parameter file
 
-To modify the hyperparameters you need to change the parameters in 'conf/PEMSD4.conf' 
-and "PEMSD8.conf".
+To modify the hyperparameters of PEMSD4 you need to change the parameters in 'TARGCN/model/conf/PEMSD4.conf'.
   
 The code is associated with the following paper: 
 Yun Song, Cong Jiang, Fan Wendong, Deng Zelin, Bai Xinke, "TARGCN: Temporal 
